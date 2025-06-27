@@ -1,0 +1,32 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"declaration": true,
+		"lib": [
+			"DOM",
+			"ES2022",
+			"ES2024.Promise"
+		],
+		"module": "none",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"outFile": "../index.js",
+		"removeComments": true,
+		"skipLibCheck": true,
+		"target": "ES2022"
+	},
+	"exclude": [
+		"node_modules",
+		"build",
+		"*.d.ts",
+		"*.js"
+	],
+	"include": [
+		"**/*.ts"
+	],
+	"rootDirs": [
+		"./",
+	]
+}

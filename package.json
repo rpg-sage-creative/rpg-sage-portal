@@ -1,0 +1,30 @@
+{
+	"name": "rpg-sage-portal",
+	"version": "0.0.0",
+	"description": "Web Portal for RPG Sage",
+	"keywords": [],
+	"private": true,
+	"author": "Randal T Meyer <randal.t.meyer@gmail.com> (https://rpgsage.io)",
+	"contributors": [],
+	"license": "GPL-3.0-only",
+	"bugs": {
+		"url": "https://github.com/rpg-sage-creative/rpg-sage-portal/issues",
+		"email": "bugs@rpgsage.io"
+	},
+	"homepage": "https://github.com/rpg-sage-creative/rpg-sage-portal#readme",
+	"funding": {
+		"type": "patreon",
+		"url": "https://www.patreon.com/rpgsage"
+	},
+	"repository": "github:rpg-sage-creative/rpg-sage-portal",
+	"scripts": {
+		"prebuildMaps": "rm ./maps/index.js; rm ./maps/index.d.ts",
+		"buildMaps": "tsc -p ./maps/ts/tsconfig.json",
+		"build": "npm run buildMaps"
+	},
+	"devDependencies": {
+		"@types/bootstrap": "^5.2.10",
+		"@types/jquery": "^3.5.32",
+		"typescript": "^5.8.3"
+	}
+}
