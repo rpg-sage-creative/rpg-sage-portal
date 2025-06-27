@@ -18,8 +18,8 @@
 	},
 	"repository": "github:rpg-sage-creative/rpg-sage-portal",
 	"scripts": {
-		"prebuildMaps": "rm ./maps/index.js; rm ./maps/index.d.ts",
-		"buildMaps": "tsc -p ./maps/ts/tsconfig.json",
+		"prebuildMaps": "rm -rf ./static/maps/index.js",
+		"buildMaps": "tsc -p ./src/maps/tsconfig.json",
 		"build": "npm run buildMaps"
 	},
 	"devDependencies": {

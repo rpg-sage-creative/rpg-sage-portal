@@ -47,13 +47,13 @@ async function renderPreview() {
 
 	const bgDrawn = await draw({ url: map.background.url }).catch((() => false));
 	if (!bgDrawn) {
-		$("#canvasPreview").closest(".border").addClass("d-none");
-		$(".alert-no-bg-image").removeClass("d-none");
+		$hide($("#canvasPreview").closest(".border"));
+		$show(".alert-no-bg-image");
 		return;
 	}
 
-	$("#canvasPreview").closest(".border").removeClass("d-none"),
-	$(".alert-no-bg-image").addClass("d-none");
+	$show($("#canvasPreview").closest(".border")),
+	$hide(".alert-no-bg-image");
 
 	for (const layer of map.layers) {
 		for (const image of layer.images) {

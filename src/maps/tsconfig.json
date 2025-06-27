@@ -1,7 +1,7 @@
 {
 	"compileOnSave": false,
 	"compilerOptions": {
-		"declaration": true,
+		"declaration": false,
 		"lib": [
 			"DOM",
 			"ES2022",
@@ -12,7 +12,7 @@
 		"noImplicitAny": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"outFile": "../index.js",
+		"outFile": "../../static/maps/index.js",
 		"removeComments": true,
 		"skipLibCheck": true,
 		"target": "ES2022"
@@ -27,6 +27,6 @@
 		"**/*.ts"
 	],
 	"rootDirs": [
-		"./",
+		"./ts",
 	]
 }

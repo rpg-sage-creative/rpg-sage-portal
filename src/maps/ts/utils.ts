@@ -1,25 +1,40 @@
 //#region jquery values
+type ElementResolvable = string | Element | JQuery;
 
-function $el<T extends HTMLElement>(elementId: string): JQuery<T> | undefined {
-	const el = $<T>(`#${elementId.replace(/^#/, "")}`);
+function $el<T extends HTMLElement>(selector: ElementResolvable): JQuery<T> | undefined {
+	const el = typeof(selector) === "string"
+		? $<T>(/^[\w\-]+$/.test(selector) ? `#${selector.replace(/^#/, "")}` : selector)
+		: $<T>(selector as JQuery<T>);
 	return el.length ? el : undefined;
 }
 
 /** Gets the value of the element if the element is defined. */
-function $val(elementId: string): string | number | string[] | undefined {
-	return $el(elementId)?.val();
+function $val(selector: ElementResolvable): string | number | string[] | undefined {
+	return $el(selector)?.val();
 }
 
 /** Gets the value of the element and forces it to a number. */
-function $num(elementId: string): number | undefined {
-	const val = $val(elementId);
+function $num(selector: ElementResolvable): number | undefined {
+	const val = $val(selector);
 	return isDefined(val) ? +val : undefined;
 }
 
 /** Gets the value of the element and forces it to a string. */
-function $str(elementId: string): string | undefined {
-	const val = $val(elementId);
+function $str(selector: ElementResolvable): string | undefined {
+	const val = $val(selector);
 	return isDefined(val) ? String(val) : undefined;
+}
+
+//#endregion
+
+//#region bootstrap
+
+function $hide(selector: ElementResolvable) {
+	return $el(selector)?.addClass("d-none");
+}
+
+function $show(selector: ElementResolvable) {
+	return $el(selector)?.removeClass("d-none");
 }
 
 //#endregion

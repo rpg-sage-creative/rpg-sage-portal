@@ -100,16 +100,16 @@ function getIndexes(ev: JQueryEvent) {
 
 function hideEditor(ev: JQueryEvent) {
 	const { layerIndex } = getIndexes(ev);
-	const el = $(`[data-layer-index="${layerIndex}"]`);
-	el.find('[data-action="form"]').addClass("d-none");
-	el.find('[data-action="list"]').removeClass("d-none");
+	const layerAttr = `[data-layer-index="${layerIndex}"]`;
+	$hide(`${layerAttr} [data-action="form"]`);
+	$show(`${layerAttr} [data-action="list"]`);
 }
 
 function showEditor(ev: JQueryEvent) {
 	const { layerIndex } = getIndexes(ev);
-	const el = $(`[data-layer-index="${layerIndex}"]`);
-	el.find('[data-action="form"]').removeClass("d-none");
-	el.find('[data-action="list"]').addClass("d-none");
+	const layerAttr = `[data-layer-index="${layerIndex}"]`;
+	$show(`${layerAttr} [data-action="form"]`);
+	$hide(`${layerAttr} [data-action="list"]`);
 }
 
 function saveChanges(ev: JQueryEvent) {

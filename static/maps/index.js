@@ -462,15 +462,15 @@ function getIndexes(ev) {
 }
 function hideEditor(ev) {
     const { layerIndex } = getIndexes(ev);
-    const el = $(`[data-layer-index="${layerIndex}"]`);
-    el.find('[data-action="form"]').addClass("d-none");
-    el.find('[data-action="list"]').removeClass("d-none");
+    const layerAttr = `[data-layer-index="${layerIndex}"]`;
+    $hide(`${layerAttr} [data-action="form"]`);
+    $show(`${layerAttr} [data-action="list"]`);
 }
 function showEditor(ev) {
     const { layerIndex } = getIndexes(ev);
-    const el = $(`[data-layer-index="${layerIndex}"]`);
-    el.find('[data-action="form"]').removeClass("d-none");
-    el.find('[data-action="list"]').addClass("d-none");
+    const layerAttr = `[data-layer-index="${layerIndex}"]`;
+    $show(`${layerAttr} [data-action="form"]`);
+    $hide(`${layerAttr} [data-action="list"]`);
 }
 function saveChanges(ev) {
     saveMap();
@@ -768,12 +768,12 @@ async function renderPreview() {
     resetCanvas();
     const bgDrawn = await draw({ url: map.background.url }).catch((() => false));
     if (!bgDrawn) {
-        $("#canvasPreview").closest(".border").addClass("d-none");
-        $(".alert-no-bg-image").removeClass("d-none");
+        $hide($("#canvasPreview").closest(".border"));
+        $show(".alert-no-bg-image");
         return;
     }
-    $("#canvasPreview").closest(".border").removeClass("d-none"),
-        $(".alert-no-bg-image").addClass("d-none");
+    $show($("#canvasPreview").closest(".border")),
+        $hide(".alert-no-bg-image");
     for (const layer of map.layers) {
         for (const image of layer.images) {
             if (image) {
@@ -849,20 +849,28 @@ const X = 0;
 const Y = 1;
 const WIDTH = 0;
 const HEIGHT = 1;
-function $el(elementId) {
-    const el = $(`#${elementId.replace(/^#/, "")}`);
+function $el(selector) {
+    const el = typeof (selector) === "string"
+        ? $(/^[\w\-]+$/.test(selector) ? `#${selector.replace(/^#/, "")}` : selector)
+        : $(selector);
     return el.length ? el : undefined;
 }
-function $val(elementId) {
-    return $el(elementId)?.val();
+function $val(selector) {
+    return $el(selector)?.val();
 }
-function $num(elementId) {
-    const val = $val(elementId);
+function $num(selector) {
+    const val = $val(selector);
     return isDefined(val) ? +val : undefined;
 }
-function $str(elementId) {
-    const val = $val(elementId);
+function $str(selector) {
+    const val = $val(selector);
     return isDefined(val) ? String(val) : undefined;
+}
+function $hide(selector) {
+    return $el(selector)?.addClass("d-none");
+}
+function $show(selector) {
+    return $el(selector)?.removeClass("d-none");
 }
 function allDefined(...values) {
     return values.every(isDefined);
