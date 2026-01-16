@@ -1,13 +1,15 @@
+/** splices lines from start with deleteCount, also trims remaining lines and filters out empty lines. */
 function splice(lines, start, deleteCount) {
     return lines
         .splice(start, deleteCount)
         .map(s => s.trim())
         .filter(s => s);
 }
+const SectionLabelRegExp = /^\s*\[(map|grid|background|terrain|aura|token)\]\s*$/i;
+/** splices a group of lines (a section) that follow the given label */
 function sectionByLabel(lines, label) {
-    const regex = /^\s*\[(map|grid|background|terrain|aura|token)\]\s*$/i;
-    const sectionIndex = lines.findIndex(line => regex.exec(line)?.[1] === label);
-    const nextSectionIndex = lines.findIndex((line, index) => index > sectionIndex && regex.test(line));
+    const sectionIndex = lines.findIndex(line => SectionLabelRegExp.exec(line)?.[1] === label);
+    const nextSectionIndex = lines.findIndex((line, index) => index > sectionIndex && SectionLabelRegExp.test(line));
     if (sectionIndex < 0) {
         return undefined;
     }
@@ -16,6 +18,7 @@ function sectionByLabel(lines, label) {
     }
     return new MapSectionParser(label, splice(lines, sectionIndex, nextSectionIndex - sectionIndex));
 }
+/** uses sectionByLabel to splice all setcions for the given label */
 function sectionsByLabel(lines, label) {
     const matchers = [];
     let loop = true;
@@ -343,10 +346,19 @@ function draw(image, colOffset = 0, rowOffset = 0, alpha) {
             const dy = ((image.gridOffset?.[ROW] ?? 1) - 1 + rowOffset) * pxPerRow;
             const dw = (image.size?.[X] ?? 0) * pxPerCol || canvasWidth;
             const dh = (image.size?.[Y] ?? 0) * pxPerRow || canvasHeight;
+
+            const scaleX = image.scaleX ?? image.scale ?? 1;
+            const sdw = scaleX * dw;
+            const sdx = dx - (sdw - dw) / 2;
+            const scaleY = image.scaleY ?? image.scale ?? 1;
+            const sdh = scaleY * dh;
+            const sdy = dy - (sdh - dh) / 2;
+
             const canvas = $el("canvasPreview")[0];
+            /** @type {CanvasRenderingContext2D} */
             const context = canvas.getContext("2d");
             context.globalAlpha = alpha ?? 1;
-            context.drawImage(img, 0, 0, width, height, dx, dy, dw, dh);
+            context.drawImage(img, 0, 0, width, height, sdx, sdy, sdw, sdh);
             resolve(true);
         };
         img.onerror = (...errs) => {
@@ -528,6 +540,7 @@ function jsonToText(map) {
             lines.push(`name=${img.name ?? ""}`);
             lines.push(`size=${img.size[0]}x${img.size[1]}`);
             lines.push(`position=${img.gridOffset[0]},${img.gridOffset[1]}`);
+            lines.push(`scale=${img.scale ?? ""}`)
             lines.push(`user=${img.user ?? ""}`);
         });
         return lines.join("\n");
@@ -538,7 +551,7 @@ function jsonToText(map) {
     }
 }
 function parseImage(image, anchors) {
-    let { name, url, cols, rows, gridOffset, userId, anchorId, opacity } = image;
+    let { name, url, cols, rows, gridOffset, userId, anchorId, opacity, scale } = image;
     if (gridOffset && anchorId && anchors) {
         const anchor = anchors.find(a => a.name === anchorId);
         if (anchor) {
@@ -555,7 +568,8 @@ function parseImage(image, anchors) {
         gridOffset: [gridOffset?.col ?? 0, gridOffset?.row ?? 0],
         user: userId,
         anchor: anchorId,
-        opacity
+        opacity,
+        scale
     };
 }
 function textToJson(raw) {
@@ -818,9 +832,10 @@ function createTerrain() {
     };
 }
 function renderTokenCols(token) {
+    const scale = (token.scale ?? 1) !== 1 ? `<sup><b>x${token.scale}</b></sup>` : ``;
     return [
         `<td>${token.name}</td>`,
-        `<td>${token.size[0]}x${token.size[1]}</td>`,
+        `<td>${token.size[0]}x${token.size[1]}${scale}</td>`,
         `<td>${token.gridOffset[0]},${token.gridOffset[1]}</td>`,
         `<td>${token.user ?? ""}</td>`,
     ].join("");
@@ -832,6 +847,7 @@ function showToken(token) {
     $("#tokenSizeRows").val(token.size?.[1] ?? "");
     $("#tokenPositionCol").val(token.gridOffset?.[0] ?? "");
     $("#tokenPositionRow").val(token.gridOffset?.[1] ?? "");
+    $("#tokenScale").val(token.scale ?? "");
     $("#tokenUser").val(token.user ?? "");
 }
 function createToken() {
@@ -840,6 +856,7 @@ function createToken() {
         url: $str("#tokenImageUrl"),
         size: [$num("tokenSizeCols"), $num("tokenSizeRows")],
         gridOffset: [$num("tokenPositionCol"), $num("tokenPositionRow")],
+        scale: $num("#tokenScale"),
         user: $str("#tokenUser"),
     };
 }
